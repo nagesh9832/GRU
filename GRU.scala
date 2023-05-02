@@ -199,7 +199,7 @@ class GRU (y: VectorD, i_size: Int, h_size: Int, o_size: Int, optimize: String =
             o.append(softmax_(vo(i)))
         return o.last
 //backwardpass
-/*
+
     def backward_pass(inputs: MatrixD, t: VectorD, o: VectorD, h: VectorD, _h: VectorD, r:VectorD, z: VectorD) : (VectorD, VectorD, Double) =
         val e = error(t)
         val n_inp = inputs.dim
@@ -288,7 +288,7 @@ class GRU (y: VectorD, i_size: Int, h_size: Int, o_size: Int, optimize: String =
 
         return (dw, db, norm(e))    //dw, db, np.linalg.norm(e)
 
-*/
+
 // rmsprop
 
 /*  def rmsprop(self, dw, db, neta, b1=.9, b2=.0, e=1e-8):
