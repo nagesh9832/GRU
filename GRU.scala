@@ -198,80 +198,8 @@ class GRU (y: VectorD, i_size: Int, h_size: Int, o_size: Int, optimize: String =
             //vo.append((ow dot h) + ob)
             o.append(softmax_(vo(i)))
         return o.last
-//backwardpass  go through the forward pass and modify the backward pass and rest of the code.
-/*    def backwardPass(t: VectorD): (Map[String, VectorD], Map[String, VectorD], Double) = {
-      // error calculation
-      val e = error(t)
-
-      // dw variables
-      var dw = Map[String, VectorD]()
-      var db = Map[String, VectorD]()
-      dw += ("uz" -> Array.ofDim[Double](h_size, i_size))
-      db += ("z" -> Array.ofDim[Double](h_size, 1))
-      dw += ("wz" -> Array.ofDim[Double](h_size, h_size))
-
-      // reset dw
-      dw += ("ur" -> Array.ofDim[Double](h_size, i_size))
-      db += ("r" -> Array.ofDim[Double](h_size, 1))
-      dw += ("wr" -> Array.ofDim[Double](h_size, h_size))
-
-      // _h dw
-      dw += ("u_h" -> Array.ofDim[Double](h_size, i_size))
-      db += ("_h" -> Array.ofDim[Double](h_size, 1))
-      dw += ("w_h" -> Array.ofDim[Double](h_size, h_size))
-
-      // hidden-2-output dw
-      dw += ("wo" -> Array.ofDim[Double](o_size, h_size))
-      db += ("o" -> Array.ofDim[Double](o_size, 1))
-
-      var dh = Array.ofDim[Double](h_size, 1)
-
-      for (i <- Range(n_inp - 1, -1, -1)) {
-        // gradient at output layer
-        val go = o(i) - t(i)
-
-        // hidden to output weight's dw
-        dw("wo") += (go * h(i).t)
-        db("o") += go
-
-        // gradient at top hidden layer
-        dh = add(dh, (ow.t * go))
-
-        val dz = subtract(h(i - 1), _h(i)) * dh(0)
-        val dz__ = z(i) * dh(0)
-        val dz_ = (1.0 - z(i)) * z(i) * dz(0)
-
-        val d_h = (1.0 - z(i)) * dh(0)
-        val d_h_ = (1.0 - pow(_h(i), 2)) * d_h
-
-        val temp = multiply(w("w_h").t, d_h_)
-        val dr = h(i - 1) * temp
-        val dr_ = (1.0 - r(i)) * r(i) * dr(0)
-        val dr__ = r(i) * temp
-
-        // calculating reset dw
-        dw("ur") += multiply(dr_, inputs(i).t)
-        db("r") += dr_
-        dw("wr") += multiply(dr_, h(i - 1).t)
-
-        // calculating update dw
-        dw("uz") += multiply(dz_, inputs(i).t)
-        db("z") += dz_
-        dw("wz") += multiply(dz_, h(i - 1).t)
-
-        // calculating _h dw
-        dw("u_h") += multiply(d_h_, inputs(i).t)
-        db("_h") += d_h_
-        dw("w_h") += multiply(d_h_, r(i) * h(i - 1).t)
-
-        dh = add(multiply(w("wr").t, dr_), add(multiply(w("wz").t, dz_), add(dz__, dr__)))
-      }
-
-      (dw, db, norm(e))
-    }
-
-*/
-
+//backwardpass
+/*
     def backward_pass(inputs: MatrixD, t: VectorD, o: VectorD, h: VectorD, _h: VectorD, r:VectorD, z: VectorD) : (VectorD, VectorD, Double) =
         val e = error(t)
         val n_inp = inputs.dim
@@ -318,12 +246,12 @@ class GRU (y: VectorD, i_size: Int, h_size: Int, o_size: Int, optimize: String =
         //for i in reversed(range(n_inp)):
     
             // gradient at output layer
-            val go: VectorD = o - t
+            val go: VectorD = o(i) - t(i)
     
                 // hidden to output weight's dw
             dow += (go dot h.transpose)
             dob += go
-    
+
                 // gradient at top hidden layer
             val dh = (ow.transpose dot go)
             val dz = (h(i-1) - _h(i)) * dh
@@ -359,9 +287,11 @@ class GRU (y: VectorD, i_size: Int, h_size: Int, o_size: Int, optimize: String =
             dh = (rg._3.transpose dot dr_) + (ug._3.transpose dot dz_) + dz__ + dr__
 
         return (dw, db, norm(e))    //dw, db, np.linalg.norm(e)
+
+*/
 // rmsprop
 
-  /*  def rmsprop(self, dw, db, neta, b1=.9, b2=.0, e=1e-8):
+/*  def rmsprop(self, dw, db, neta, b1=.9, b2=.0, e=1e-8):
         for wpi, g in dw.items():
           self.m[wpi] = b1 * self.m[wpi] + (1 - b1) * np.square(g)
         self.w[wpi] -= neta * np.divide(g, (np.sqrt(self.m[wpi]) + e))
@@ -384,11 +314,11 @@ class GRU (y: VectorD, i_size: Int, h_size: Int, o_size: Int, optimize: String =
           self.b[wpi] -= neta * db[wpi]
             return
 */
-
+/*
     def error(t: VectorD): Double=
         val loss = sum(t * log(o))
         return -loss
-
+*/
 // FIX - add methods similar to those in Forecaster - may need another trait
 
 
@@ -532,8 +462,8 @@ object GRU:
 
     //for p <- 1 to 10 do                                                // autoregressive hyper-parameter p
         banner (s"Test: GRU with lags")
-        val mod = new GRU (y,10, 20 ,1)                                 // create model for time series data
-        mod.trainNtest ()()                                            // train the model on full dataset
+        val mod = new GRU (y,10, 20 ,1)             // create model for time series data
+        mod.trainNtest ()()                                             // train the model on full dataset
        // println (mod.summary)
 
         //val yp = mod.predict (mod.getX)
